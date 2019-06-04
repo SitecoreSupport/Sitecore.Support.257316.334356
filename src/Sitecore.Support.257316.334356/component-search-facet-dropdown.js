@@ -10,7 +10,7 @@ XA.component.search.facet.dropdown = (function ($, document) {
     var FacetDropdownModel = XA.component.search.baseModel.extend({
         defaults: {
             template: "<% _.forEach(results, function(result){" +
-                "%><option data-facetName='<%= result.Name !== '' ? result.Name : '_empty_' %>' <%= result.Selected !== undefined ? 'selected' : '' %> ><%= result.Name !== '' ? result.Name : emptyText %> (<%= result.Count %>)</option><%" +
+                "%><option data-facetName='<%= result.Name !== '' ? encodeURIComponent(result.Name.replace(\"\'\",'.qqm.')) : '_empty_' %>' <%= result.Selected !== undefined ? 'selected' : '' %> ><%= result.Name !== '' ? result.Name : emptyText %> (<%= result.Count %>)</option><%" +
                 "}); %>",
             dataProperties: {},
             blockNextRequest: false,
@@ -110,6 +110,9 @@ XA.component.search.facet.dropdown = (function ($, document) {
             var $selectedOption = this.$el.find(".facet-dropdown-select").find("option:selected"),
                 facetName = $selectedOption.data("facetname"),
                 sig = this.model.get("sig");
+
+            var value = decodeURIComponent(facetName);
+            facetName = value.replace('.qqm.', "'");
 
             if (facetName === "") {
                 this.model.set({ optionSelected: false });
